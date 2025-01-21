@@ -2,3 +2,6 @@
 input/
 .idea/
 .DS_Store
+token.json
+credentials.json
+*.mrc
