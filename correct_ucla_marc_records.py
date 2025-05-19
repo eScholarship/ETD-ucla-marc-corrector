@@ -47,7 +47,11 @@ def main():
             print(f"\nProcessing record:\n{record['035']}\n{record['856']}")
 
             # Split out the UCLA id and send the query
-            proquest_ucla_id = record['035']['9'].split(')')[1]
+            proquest_string = record['035']['9']
+            if 'www.proquest.com/LegacyDocView' in proquest_string:
+                proquest_ucla_id = proquest_string.split('/')[-1]
+            else:
+                proquest_ucla_id = proquest_string.split(')')[1]
 
             # Send the query w/ proquest ID
             print(f"Querying eschol db for local_id ucla:{proquest_ucla_id}")
