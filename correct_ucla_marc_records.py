@@ -53,7 +53,11 @@ def main():
             print(f"Querying eschol db for local_id ucla:{proquest_ucla_id}")
             with mysql_conn.cursor() as cursor:
                 cursor.execute(get_eschol_sql_query(proquest_ucla_id))
-                eschol_id = cursor.fetchone()['eschol_id']
+                result = cursor.fetchone()
+                if result is None:
+                    print("!!! NO MATCHING ESCHOL ID FOUND FOR PROQUEST UCLA ID.\n")
+                    continue
+                eschol_id = result.get('eschol_id')
 
             # Trim the shoulder and update the data
             record['856']['u'] = f'http://escholarship.org/uc/item/{eschol_id[2:]}'
