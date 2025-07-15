@@ -200,19 +200,24 @@ def get_eschol_db_connection(env):
 
 def get_eschol_sql_query(proquest_ucla_id):
     return f"""
-        select
-            i.id as eschol_id
-        from
-            items i,
-            JSON_TABLE(
-                attrs,
-                "$.local_ids[*]"
-                COLUMNS(local_id varchar(255) PATH "$.id",
-                        local_type varchar(255) PATH "$.type")
-            ) as json_t
-        where
-            json_t.local_type = 'other'
-            and json_t.local_id like ('%ucla:{proquest_ucla_id}');"""
+select
+	i.id as eschol_id
+    from
+        items i,
+        JSON_TABLE(
+            attrs,
+            "$.local_ids[*]"
+            COLUMNS(local_id varchar(255) PATH "$.id",
+                    local_type varchar(255) PATH "$.type")
+        ) as json_t
+    where
+        json_t.local_type = 'other'
+        and (
+        	json_t.local_id like ('%ucla:{proquest_ucla_id}')
+			or (
+				json_t.local_id like ('%{proquest_ucla_id}')
+				and json_t.local_id like ('%https://www.proquest.com/LegacyDocView/%')))
+limit 1;"""
 
 
 # =========================
